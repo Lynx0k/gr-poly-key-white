@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <title>Greek Polytonic Keyboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      background: #dbdbe1;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 98%;
+      height: 98%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: stretch;
+      background: #ddd;
+      border-radius: 10px;
+      padding: 16px 18px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .editor-area {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      margin-bottom: 3px;
+    }
+
+    .textarea-wrapper {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    textarea {
+      flex: 1 1 auto;
+      width: 100%;
+      resize: vertical;
+      min-height: 120px;
+      max-height: 100%;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+      background: #fff;
+      color: #090909;
+      font-family: "Times New Roman", "Times", serif;
+      font-size: 28px;
+      line-height: 1.4;
+      outline: none;
+    }
+
+    .toolbar {
+      margin-top: 4px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: #f4f4f6;
+      border: 1px solid #aaa;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .toolbar button {
+      min-width: 60px;
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+      background: #e9e9ed;
+      color: #090909;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .toolbar button:hover {
+      background: #d0d0d7;
+    }
+
+    .toolbar button:active {
+      transform: translateY(1px);
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    .slider-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 6px;
+    }
+
+    .slider-wrapper label {
+      font-size: 12px;
+      color: #090909;
+      white-space: nowrap;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .slider-wrapper input[type="range"] {
+      width: 140px;
+    }
+
+    .slider-value {
+      font-size: 12px;
+      color: #090909;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .keyboard-container {
+      flex: 0 0 auto;
+      margin-top: 1px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f4f4f6;
+      border: 1px solid #aaa;
+      overflow: auto;
+    }
+
+    .keyboard-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      justify-content: center;
+    }
+
+    .key {
+      min-width: 34px;
+      padding: 2px;
+      border-radius: 4px;
+      font-family: Times New Roman;
+      text-align: center;
+      font-size: 32px;
+      cursor: pointer;
+      border: 1px solid #00000055;
+      color: #090909;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .key:hover {
+      filter: brightness(1.05);
+    }
+
+    .key.last-pressed {
+      outline: 2px solid #ff5722;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    }
+
+    /* Color groups for visual distinction */
+    .group-alpha-Αα {
+      background: #fcc9ce;
+    }
+
+    .group-beta-Ββϐ {
+      background: #aadeda;
+    }
+
+    .group-gamma-Γγ {
+      background: #d8d693;
+    }
+
+    .group-delta-Δδ {
+      background: #e6eee7;
+    }
+
+    .group-epsilon-Εε {
+      background: #fef0ba;
+    }
+
+    .group-zeta-Ζζ {
+      background: #b9e4e8;
+    }
+
+    .group-eta-Ηη {
+      background: #bfe4ff;
+    }
+
+    .group-theta-Θθϑ {
+      background: #ded9ca;
+    }
+
+    .group-iota-Ιι {
+      background: #ffdabf;
+    }
+
+    .group-kappa-Κκϰ {
+      background: #ebdfbc;
+    }
+
+    .group-lamda-Λλ {
+      background: #f7dbd1;
+    }
+
+    .group-mu-Μμ {
+      background: #e4ccd5;
+    }
+
+    .group-nu-Νν {
+      background: #d4e1de;
+    }
+
+    .group-xi-Ξξ {
+      background: #9cf8d9;
+    }
+
+    .group-omicron-Οο {
+      background: #f5daf0;
+    }
+
+    .group-pi-Ππϖ {
+      background: #eaebd1;
+    }
+
+    .group-rho-Ρρ {
+      background: #a6dbea;
+    }
+
+    .group-sigma-Σσς {
+      background: #d6e8ab;
+    }
+
+    .group-tau-Ττ {
+      background: #bcd4c4;
+    }
+
+    .group-upsilon-Υυ {
+      background: #dbf6e0;
+    }
+
+    .group-phi-Φφϕ {
+      background: #dbeff7;
+    }
+
+    .group-chi-Χχ {
+      background: #fef1e7;
+    }
+
+    .group-psi-Ψψ {
+      background: #ffbfff;
+    }
+
+    .group-omega-Ωω {
+      background: #e6e7fb;
+    }
+
+    .group-digamma-Ϝϝ {
+      background: #c3c5f8;
+    }
+
+    .group-stigma-Ϛϛ {
+      background: #a7cccc;
+    }
+
+    .group-heta-Ͱͱ {
+      background: #dccbfe;
+    }
+
+    .group-san-Ϻϻ {
+      background: #d6c0c0;
+    }
+
+    .group-koppa-Ϙϙ {
+      background: #fde6a2;
+    }
+
+    .group-sampi-Ͳͳ {
+      background: #86cccc;
+    }
+
+    .group-sho-Ϸϸ {
+      background: #ffb2d4;
+    }
+
+    .group-koppa-Ϟϟ {
+      background: #cfced1;
+    }
+
+    .group-sampi-Ϡϡ {
+      background: #efefbf;
+    }
+
+    .group-kai-Ϗϗ {
+      background: #e4e48d;
+    }
+
+    .group-yot-Ϳϳ {
+      background: #cfb2cf;
+    }
+
+    .group-lunate-epsilon-ϵ϶ {
+      background: #7cb8fe;
+    }
+
+    .group-lunate-sigma {
+      background: #dcebb7;
+    }
+
+    .group-pamphylian-digamma-Ͷͷ {
+      background: #dfadcd;
+    }
+
+    .group-punctuation {
+      background: #eaedec;
+    }
+
+    .group-spc {
+      background: #eefaeb;
+    }
+
+    .group-coptic {
+      background: #ebe0d6;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="text-align: center;" class="app-container">
+    <div class="editor-area">
+      <div class="textarea-wrapper">
+        <textarea id="textArea" spellcheck="false"></textarea>
+
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <button id="btnUndo" type="button">Undo</button>
+            <button id="btnRedo" type="button">Redo</button>
+            <button id="btnCopy" type="button">Copy</button>
+            <button id="btnPaste" type="button">Paste</button>
+            <button id="btnExport" type="button">Export TXT</button>
+            <button id="btnSpace" type="button">Space</button>
+            <button id="btnBackspace" type="button">Backspace</button>
+            <button id="btnClear" type="button">Clear</button>
+          </div>
+
+          <div class="slider-wrapper">
+            <label for="fontSizeSlider">Font size</label>
+            <input id="fontSizeSlider" min="16" max="60" value="28" type="range">
+            <div id="fontSizeValue" class="slider-value">28 px</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="keyboard-container">
+      <div class="keyboard-row">
+        <div class="key group-alpha-Αα">Α</div>
+        <div class="key group-alpha-Αα">α</div>
+        <div class="key group-beta-Ββϐ">Β</div>
+        <div class="key group-beta-Ββϐ">β</div>
+        <div class="key group-beta-Ββϐ">ϐ</div>
+        <div class="key group-gamma-Γγ">Γ</div>
+        <div class="key group-gamma-Γγ">γ</div>
+        <div class="key group-delta-Δδ">Δ</div>
+        <div class="key group-delta-Δδ">δ</div>
+        <div class="key group-epsilon-Εε">Ε</div>
+        <div class="key group-epsilon-Εε">ε</div>
+        <div class="key group-zeta-Ζζ">Ζ</div>
+        <div class="key group-zeta-Ζζ">ζ</div>
+        <div class="key group-eta-Ηη">Η</div>
+        <div class="key group-eta-Ηη">η</div>
+        <div class="key group-theta-Θθϑ">Θ</div>
+        <div class="key group-theta-Θθϑ">θ</div>
+        <div class="key group-theta-Θθϑ">ϑ</div>
+        <div class="key group-iota-Ιι">Ι</div>
+        <div class="key group-iota-Ιι">ι</div>
+        <div class="key group-kappa-Κκϰ">Κ</div>
+        <div class="key group-kappa-Κκϰ">κ</div>
+        <div class="key group-kappa-Κκϰ">ϰ</div>
+        <div class="key group-lamda-Λλ">Λ</div>
+        <div class="key group-lamda-Λλ">λ</div>
+        <div class="key group-mu-Μμ">Μ</div>
+        <div class="key group-mu-Μμ">μ</div>
+        <div class="key group-nu-Νν">Ν</div>
+        <div class="key group-nu-Νν">ν</div>
+        <div class="key group-xi-Ξξ">Ξ</div>
+        <div class="key group-xi-Ξξ">ξ</div>
+        <div class="key group-omicron-Οο">Ο</div>
+        <div class="key group-omicron-Οο">ο</div>
+        <div class="key group-pi-Ππϖ">Π</div>
+        <div class="key group-pi-Ππϖ">π</div>
+        <div class="key group-pi-Ππϖ">ϖ</div>
+        <div class="key group-rho-Ρρ">Ρ</div>
+        <div class="key group-rho-Ρρ">ρ</div>
+        <div class="key group-rho-Ρρ">ϱ</div>
+        <div class="key group-sigma-Σσς">Σ</div>
+        <div class="key group-sigma-Σσς">σ</div>
+        <div class="key group-sigma-Σσς">ς</div>
+        <div class="key group-tau-Ττ">Τ</div>
+        <div class="key group-tau-Ττ">τ</div>
+        <div class="key group-upsilon-Υυ">Υ</div>
+        <div class="key group-upsilon-Υυ">υ</div>
+        <div class="key group-phi-Φφϕ">Φ</div>
+        <div class="key group-phi-Φφϕ">φ</div>
+        <div class="key group-phi-Φφϕ">ϕ</div>
+        <div class="key group-chi-Χχ">Χ</div>
+        <div class="key group-chi-Χχ">χ</div>
+        <div class="key group-psi-Ψψ">Ψ</div>
+        <div class="key group-psi-Ψψ">ψ</div>
+        <div class="key group-omega-Ωω">Ω</div>
+        <div class="key group-omega-Ωω">ω</div>
+        <div class="key group-alpha-Αα">Ἀ</div>
+        <div class="key group-alpha-Αα">Ἁ</div>
+        <div class="key group-alpha-Αα">Ἂ</div>
+        <div class="key group-alpha-Αα">Ἃ</div>
+        <div class="key group-alpha-Αα">Ἄ</div>
+        <div class="key group-alpha-Αα">Ἅ</div>
+        <div class="key group-alpha-Αα">Ἆ</div>
+        <div class="key group-alpha-Αα">Ἇ</div>
+        <div class="key group-alpha-Αα">ᾈ</div>
+        <div class="key group-alpha-Αα">ᾉ</div>
+        <div class="key group-alpha-Αα">ᾊ</div>
+        <div class="key group-alpha-Αα">ᾋ</div>
+        <div class="key group-alpha-Αα">ᾌ</div>
+        <div class="key group-alpha-Αα">ᾍ</div>
+        <div class="key group-alpha-Αα">ᾎ</div>
+        <div class="key group-alpha-Αα">ᾏ</div>
+        <div class="key group-alpha-Αα">Ᾰ</div>
+        <div class="key group-alpha-Αα">Ᾱ</div>
+        <div class="key group-alpha-Αα">Ὰ</div>
+        <div class="key group-alpha-Αα">Ά</div>
+        <div class="key group-alpha-Αα">ᾼ</div>
+        <div class="key group-alpha-Αα">ἀ</div>
+        <div class="key group-alpha-Αα">ἁ</div>
+        <div class="key group-alpha-Αα">ἂ</div>
+        <div class="key group-alpha-Αα">ἃ</div>
+        <div class="key group-alpha-Αα">ἄ</div>
+        <div class="key group-alpha-Αα">ἅ</div>
+        <div class="key group-alpha-Αα">ἆ</div>
+        <div class="key group-alpha-Αα">ἇ</div>
+        <div class="key group-alpha-Αα">ὰ</div>
+        <div class="key group-alpha-Αα">ά</div>
+        <div class="key group-alpha-Αα">ᾀ</div>
+        <div class="key group-alpha-Αα">ᾁ</div>
+        <div class="key group-alpha-Αα">ᾂ</div>
+        <div class="key group-alpha-Αα">ᾃ</div>
+        <div class="key group-alpha-Αα">ᾄ</div>
+        <div class="key group-alpha-Αα">ᾅ</div>
+        <div class="key group-alpha-Αα">ᾆ</div>
+        <div class="key group-alpha-Αα">ᾇ</div>
+        <div class="key group-alpha-Αα">ᾰ</div>
+        <div class="key group-alpha-Αα">ᾱ</div>
+        <div class="key group-alpha-Αα">ᾲ</div>
+        <div class="key group-alpha-Αα">ᾳ</div>
+        <div class="key group-alpha-Αα">ᾴ</div>
+        <div class="key group-alpha-Αα">ᾶ</div>
+        <div class="key group-alpha-Αα">ᾷ</div>
+        <div class="key group-epsilon-Εε">Ἐ</div>
+        <div class="key group-epsilon-Εε">Ἑ</div>
+        <div class="key group-epsilon-Εε">Ἒ</div>
+        <div class="key group-epsilon-Εε">Ἓ</div>
+        <div class="key group-epsilon-Εε">Ἔ</div>
+        <div class="key group-epsilon-Εε">Ἕ</div>
+        <div class="key group-epsilon-Εε">Ὲ</div>
+        <div class="key group-epsilon-Εε">Έ</div>
+        <div class="key group-epsilon-Εε">ἐ</div>
+        <div class="key group-epsilon-Εε">ἑ</div>
+        <div class="key group-epsilon-Εε">ἒ</div>
+        <div class="key group-epsilon-Εε">ἓ</div>
+        <div class="key group-epsilon-Εε">ἔ</div>
+        <div class="key group-epsilon-Εε">ἕ</div>
+        <div class="key group-epsilon-Εε">ὲ</div>
+        <div class="key group-epsilon-Εε">έ</div>
+        <div class="key group-eta-Ηη">Ἠ</div>
+        <div class="key group-eta-Ηη">Ἡ</div>
+        <div class="key group-eta-Ηη">Ἢ</div>
+        <div class="key group-eta-Ηη">Ἣ</div>
+        <div class="key group-eta-Ηη">Ἤ</div>
+        <div class="key group-eta-Ηη">Ἥ</div>
+        <div class="key group-eta-Ηη">Ἦ</div>
+        <div class="key group-eta-Ηη">Ἧ</div>
+        <div class="key group-eta-Ηη">ᾘ</div>
+        <div class="key group-eta-Ηη">ᾙ</div>
+        <div class="key group-eta-Ηη">ᾚ</div>
+        <div class="key group-eta-Ηη">ᾛ</div>
+        <div class="key group-eta-Ηη">ᾜ</div>
+        <div class="key group-eta-Ηη">ᾝ</div>
+        <div class="key group-eta-Ηη">ᾞ</div>
+        <div class="key group-eta-Ηη">ᾟ</div>
+        <div class="key group-eta-Ηη">Ὴ</div>
+        <div class="key group-eta-Ηη">Ή</div>
+        <div class="key group-eta-Ηη">ῌ</div>
+        <div class="key group-eta-Ηη">ἠ</div>
+        <div class="key group-eta-Ηη">ἡ</div>
+        <div class="key group-eta-Ηη">ἢ</div>
+        <div class="key group-eta-Ηη">ἣ</div>
+        <div class="key group-eta-Ηη">ἤ</div>
+        <div class="key group-eta-Ηη">ἥ</div>
+        <div class="key group-eta-Ηη">ἦ</div>
+        <div class="key group-eta-Ηη">ἧ</div>
+        <div class="key group-eta-Ηη">ὴ</div>
+        <div class="key group-eta-Ηη">ή</div>
+        <div class="key group-eta-Ηη">ῂ</div>
+        <div class="key group-eta-Ηη">ῃ</div>
+        <div class="key group-eta-Ηη">ῄ</div>
+        <div class="key group-eta-Ηη">ῆ</div>
+        <div class="key group-eta-Ηη">ῇ</div>
+        <div class="key group-eta-Ηη">ᾐ</div>
+        <div class="key group-eta-Ηη">ᾑ</div>
+        <div class="key group-eta-Ηη">ᾒ</div>
+        <div class="key group-eta-Ηη">ᾓ</div>
+        <div class="key group-eta-Ηη">ᾔ</div>
+        <div class="key group-eta-Ηη">ᾕ</div>
+        <div class="key group-eta-Ηη">ᾖ</div>
+        <div class="key group-eta-Ηη">ᾗ</div>
+        <div class="key group-iota-Ιι">Ἰ</div>
+        <div class="key group-iota-Ιι">Ἱ</div>
+        <div class="key group-iota-Ιι">Ἲ</div>
+        <div class="key group-iota-Ιι">Ἳ</div>
+        <div class="key group-iota-Ιι">Ἴ</div>
+        <div class="key group-iota-Ιι">Ἵ</div>
+        <div class="key group-iota-Ιι">Ἶ</div>
+        <div class="key group-iota-Ιι">Ἷ</div>
+        <div class="key group-iota-Ιι">Ῐ</div>
+        <div class="key group-iota-Ιι">Ῑ</div>
+        <div class="key group-iota-Ιι">Ὶ</div>
+        <div class="key group-iota-Ιι">Ί</div>
+        <div class="key group-iota-Ιι">Ϊ</div>
+        <div class="key group-iota-Ιι">ἰ</div>
+        <div class="key group-iota-Ιι">ἱ</div>
+        <div class="key group-iota-Ιι">ἲ</div>
+        <div class="key group-iota-Ιι">ἳ</div>
+        <div class="key group-iota-Ιι">ἴ</div>
+        <div class="key group-iota-Ιι">ἵ</div>
+        <div class="key group-iota-Ιι">ἶ</div>
+        <div class="key group-iota-Ιι">ἷ</div>
+        <div class="key group-iota-Ιι">ὶ</div>
+        <div class="key group-iota-Ιι">ί</div>
+        <div class="key group-iota-Ιι">ῐ</div>
+        <div class="key group-iota-Ιι">ῑ</div>
+        <div class="key group-iota-Ιι">ῒ</div>
+        <div class="key group-iota-Ιι">ΐ</div>
+        <div class="key group-iota-Ιι">ῖ</div>
+        <div class="key group-iota-Ιι">ῗ</div>
+        <div class="key group-iota-Ιι">ϊ</div>
+        <div class="key group-omicron-Οο">Ὀ</div>
+        <div class="key group-omicron-Οο">Ὁ</div>
+        <div class="key group-omicron-Οο">Ὂ</div>
+        <div class="key group-omicron-Οο">Ὃ</div>
+        <div class="key group-omicron-Οο">Ὄ</div>
+        <div class="key group-omicron-Οο">Ὅ</div>
+        <div class="key group-omicron-Οο">Ὸ</div>
+        <div class="key group-omicron-Οο">Ό</div>
+        <div class="key group-omicron-Οο">ὀ</div>
+        <div class="key group-omicron-Οο">ὁ</div>
+        <div class="key group-omicron-Οο">ὂ</div>
+        <div class="key group-omicron-Οο">ὃ</div>
+        <div class="key group-omicron-Οο">ὄ</div>
+        <div class="key group-omicron-Οο">ὅ</div>
+        <div class="key group-omicron-Οο">ὸ</div>
+        <div class="key group-omicron-Οο">ό</div>
+        <div class="key group-upsilon-Υυ">Ὑ</div>
+        <div class="key group-upsilon-Υυ">Ὓ</div>
+        <div class="key group-upsilon-Υυ">Ὕ</div>
+        <div class="key group-upsilon-Υυ">Ὗ</div>
+        <div class="key group-upsilon-Υυ">Ῠ</div>
+        <div class="key group-upsilon-Υυ">Ῡ</div>
+        <div class="key group-upsilon-Υυ">Ὺ</div>
+        <div class="key group-upsilon-Υυ">Ύ</div>
+        <div class="key group-upsilon-Υυ">Ϋ</div>
+        <div class="key group-upsilon-Υυ">ὐ</div>
+        <div class="key group-upsilon-Υυ">ὑ</div>
+        <div class="key group-upsilon-Υυ">ὒ</div>
+        <div class="key group-upsilon-Υυ">ὓ</div>
+        <div class="key group-upsilon-Υυ">ὔ</div>
+        <div class="key group-upsilon-Υυ">ὕ</div>
+        <div class="key group-upsilon-Υυ">ὖ</div>
+        <div class="key group-upsilon-Υυ">ὗ</div>
+        <div class="key group-upsilon-Υυ">ὺ</div>
+        <div class="key group-upsilon-Υυ">ύ</div>
+        <div class="key group-upsilon-Υυ">ῠ</div>
+        <div class="key group-upsilon-Υυ">ῡ</div>
+        <div class="key group-upsilon-Υυ">ῢ</div>
+        <div class="key group-upsilon-Υυ">ΰ</div>
+        <div class="key group-upsilon-Υυ">ῦ</div>
+        <div class="key group-upsilon-Υυ">ῧ</div>
+        <div class="key group-upsilon-Υυ">ϋ</div>
+        <div class="key group-omega-Ωω">Ὠ</div>
+        <div class="key group-omega-Ωω">Ὡ</div>
+        <div class="key group-omega-Ωω">Ὢ</div>
+        <div class="key group-omega-Ωω">Ὣ</div>
+        <div class="key group-omega-Ωω">Ὤ</div>
+        <div class="key group-omega-Ωω">Ὥ</div>
+        <div class="key group-omega-Ωω">Ὦ</div>
+        <div class="key group-omega-Ωω">Ὧ</div>
+        <div class="key group-omega-Ωω">ᾨ</div>
+        <div class="key group-omega-Ωω">ᾩ</div>
+        <div class="key group-omega-Ωω">ᾪ</div>
+        <div class="key group-omega-Ωω">ᾫ</div>
+        <div class="key group-omega-Ωω">ᾬ</div>
+        <div class="key group-omega-Ωω">ᾭ</div>
+        <div class="key group-omega-Ωω">ᾮ</div>
+        <div class="key group-omega-Ωω">ᾯ</div>
+        <div class="key group-omega-Ωω">Ὼ</div>
+        <div class="key group-omega-Ωω">Ώ</div>
+        <div class="key group-omega-Ωω">ῼ</div>
+        <div class="key group-omega-Ωω">ὠ</div>
+        <div class="key group-omega-Ωω">ὡ</div>
+        <div class="key group-omega-Ωω">ὢ</div>
+        <div class="key group-omega-Ωω">ὣ</div>
+        <div class="key group-omega-Ωω">ὤ</div>
+        <div class="key group-omega-Ωω">ὥ</div>
+        <div class="key group-omega-Ωω">ὦ</div>
+        <div class="key group-omega-Ωω">ὧ</div>
+        <div class="key group-omega-Ωω">ὼ</div>
+        <div class="key group-omega-Ωω">ώ</div>
+        <div class="key group-omega-Ωω">ᾠ</div>
+        <div class="key group-omega-Ωω">ᾡ</div>
+        <div class="key group-omega-Ωω">ᾢ</div>
+        <div class="key group-omega-Ωω">ᾣ</div>
+        <div class="key group-omega-Ωω">ᾤ</div>
+        <div class="key group-omega-Ωω">ᾥ</div>
+        <div class="key group-omega-Ωω">ᾦ</div>
+        <div class="key group-omega-Ωω">ᾧ</div>
+        <div class="key group-omega-Ωω">ῲ</div>
+        <div class="key group-omega-Ωω">ῳ</div>
+        <div class="key group-omega-Ωω">ῴ</div>
+        <div class="key group-omega-Ωω">ῶ</div>
+        <div class="key group-omega-Ωω">ῷ</div>
+        <div class="key group-rho-Ρρ">Ῥ</div>
+        <div class="key group-rho-Ρρ">ῤ</div>
+        <div class="key group-rho-Ρρ">ῥ</div>
+        <div class="key group-rho-Ρρ">ϼ</div>
+        <div class="key group-upsilon-Υυ">ϒ</div>
+        <div class="key group-upsilon-Υυ">ϓ</div>
+        <div class="key group-upsilon-Υυ">ϔ</div>
+        <div class="key group-punctuation">ʹ</div>
+        <div class="key group-punctuation">͵</div>
+        <div class="key group-punctuation">·</div>
+        <div class="key group-punctuation">:</div>
+        <div class="key group-punctuation">;</div>
+        <div class="key group-punctuation">᾽</div>
+        <div class="key group-punctuation">«</div>
+        <div class="key group-punctuation">»</div>
+        <div class="key group-punctuation">-</div>
+        <div class="key group-punctuation">''</div>
+        <div class="key group-spc">′</div>
+        <div class="key group-spc">‵</div>
+        <div class="key group-spc">‧</div>
+        <div class="key group-spc">†</div>
+        <div class="key group-spc">⁘</div>
+        <div class="key group-spc">⁛</div>
+        <div class="key group-spc">⁕</div>
+        <div class="key group-spc">⁜</div>
+        <div class="key group-kai-Ϗϗ">Ϗ</div>
+        <div class="key group-kai-Ϗϗ">ϗ</div>
+        <div class="key group-stigma-Ϛϛ">Ϛ</div>
+        <div class="key group-stigma-Ϛϛ">ϛ</div>
+        <div class="key group-digamma-Ϝϝ">Ϝ</div>
+        <div class="key group-digamma-Ϝϝ">ϝ</div>
+        <div class="key group-koppa-Ϟϟ">Ϟ</div>
+        <div class="key group-koppa-Ϟϟ">ϟ</div>
+        <div class="key group-sampi-Ϡϡ">Ϡ</div>
+        <div class="key group-sampi-Ϡϡ">ϡ</div>
+        <div class="key group-koppa-Ϙϙ">Ϙ</div>
+        <div class="key group-koppa-Ϙϙ">ϙ</div>
+        <div class="key group-sampi-Ͳͳ">Ͳ</div>
+        <div class="key group-sampi-Ͳͳ">ͳ</div>
+        <div class="key group-pamphylian-digamma-Ͷͷ">Ͷ</div>
+        <div class="key group-pamphylian-digamma-Ͷͷ">ͷ</div>
+        <div class="key group-heta-Ͱͱ">Ͱ</div>
+        <div class="key group-heta-Ͱͱ">ͱ</div>
+        <div class="key group-san-Ϻϻ">Ϻ</div>
+        <div class="key group-san-Ϻϻ">ϻ</div>
+        <div class="key group-sho-Ϸϸ">Ϸ</div>
+        <div class="key group-sho-Ϸϸ">ϸ</div>
+        <div class="key group-lunate-epsilon-ϵ϶">ϵ</div>
+        <div class="key group-lunate-epsilon-ϵ϶">϶</div>
+        <div class="key group-theta-Θθϑ">ϴ</div>
+        <div class="key group-yot-Ϳϳ">Ϳ</div>
+        <div class="key group-yot-Ϳϳ">ϳ</div>
+        <div class="key group-lunate-sigma">Ϲ</div>
+        <div class="key group-lunate-sigma">ϲ</div>
+        <div class="key group-lunate-sigma">Ͻ</div>
+        <div class="key group-lunate-sigma">ͻ</div>
+        <div class="key group-lunate-sigma">Ͼ</div>
+        <div class="key group-lunate-sigma">ͼ</div>
+        <div class="key group-lunate-sigma">Ͽ</div>
+        <div class="key group-lunate-sigma">ͽ</div>
+        <div class="key group-coptic">Ϣ</div>
+        <div class="key group-coptic">ϣ</div>
+        <div class="key group-coptic">Ϥ</div>
+        <div class="key group-coptic">ϥ</div>
+        <div class="key group-coptic">Ϧ</div>
+        <div class="key group-coptic">ϧ</div>
+        <div class="key group-coptic">Ϩ</div>
+        <div class="key group-coptic">ϩ</div>
+        <div class="key group-coptic">Ϫ</div>
+        <div class="key group-coptic">ϫ</div>
+        <div class="key group-coptic">Ϭ</div>
+        <div class="key group-coptic">ϭ</div>
+        <div class="key group-coptic">Ϯ</div>
+        <div class="key group-coptic">ϯ</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const textArea = document.getElementById('textArea');
+      const keys = document.querySelectorAll('.key');
+      const fontSizeSlider = document.getElementById('fontSizeSlider');
+      const fontSizeValue = document.getElementById('fontSizeValue');
+      const btnUndo = document.getElementById('btnUndo');
+      const btnRedo = document.getElementById('btnRedo');
+      const btnCopy = document.getElementById('btnCopy');
+      const btnPaste = document.getElementById('btnPaste');
+      const btnExport = document.getElementById('btnExport');
+      const btnSpace = document.getElementById('btnSpace');
+      const btnBackspace = document.getElementById('btnBackspace');
+      const btnClear = document.getElementById('btnClear');
+      let lastPressedKey = null;
+      // Simple history for Undo/Redo
+      const history = [];
+      let historyIndex = -1;
+      let isApplyingHistory = false;
+
+      function pushHistory() {
+        if (isApplyingHistory) return;
+        const value = textArea.value;
+        const selectionStart = textArea.selectionStart;
+        const selectionEnd = textArea.selectionEnd;
+        const snapshot = {
+          value,
+          selectionStart,
+          selectionEnd
+        };
+        if (historyIndex >= 0) {
+          const current = history[historyIndex];
+          if (current.value === value &&
+            current.selectionStart === selectionStart &&
+            current.selectionEnd === selectionEnd) {
+            return;
+          }
+        }
+        history.splice(historyIndex + 1);
+        history.push(snapshot);
+        historyIndex = history.length - 1;
+        updateUndoRedoButtons();
+      }
+
+      function applyHistory(index) {
+        if (index < 0 || index >= history.length) return;
+        isApplyingHistory = true;
+        const snapshot = history[index];
+        textArea.value = snapshot.value;
+        textArea.selectionStart = snapshot.selectionStart;
+        textArea.selectionEnd = snapshot.selectionEnd;
+        textArea.focus();
+        autoScrollToBottom();
+        isApplyingHistory = false;
+      }
+
+      function updateUndoRedoButtons() {
+        btnUndo.disabled = historyIndex <= 0;
+        btnRedo.disabled = historyIndex >= history.length - 1;
+      }
+
+      function insertAtCursor(text) {
+        const start = textArea.selectionStart;
+        const end = textArea.selectionEnd;
+        const before = textArea.value.slice(0, start);
+        const after = textArea.value.slice(end);
+        textArea.value = before + text + after;
+        const newPos = start + text.length;
+        textArea.selectionStart = newPos;
+        textArea.selectionEnd = newPos;
+        textArea.focus();
+        autoScrollToBottom();
+        pushHistory();
+      }
+
+      function autoScrollToBottom() {
+        textArea.scrollTop = textArea.scrollHeight;
+      }
+      // Initialize font size
+      function updateFontSize() {
+        const size = parseInt(fontSizeSlider.value, 10);
+        textArea.style.fontSize = size + 'px';
+        fontSizeValue.textContent = size + ' px';
+      }
+      updateFontSize();
+      fontSizeSlider.addEventListener('input', updateFontSize);
+      // Keyboard keys
+      keys.forEach(key => {
+        key.addEventListener('click', () => {
+          const char = key.textContent;
+          insertAtCursor(char);
+          if (lastPressedKey) {
+            lastPressedKey.classList.remove('last-pressed');
+          }
+          key.classList.add('last-pressed');
+          lastPressedKey = key;
+        });
+      });
+      // Toolbar actions
+      btnSpace.addEventListener('click', () => {
+        insertAtCursor(' ');
+      });
+      btnBackspace.addEventListener('click', () => {
+        const start = textArea.selectionStart;
+        const end = textArea.selectionEnd;
+        if (start === end && start > 0) {
+          const before = textArea.value.slice(0, start - 1);
+          const after = textArea.value.slice(end);
+          textArea.value = before + after;
+          const newPos = start - 1;
+          textArea.selectionStart = newPos;
+          textArea.selectionEnd = newPos;
+        } else if (start !== end) {
+          const before = textArea.value.slice(0, start);
+          const after = textArea.value.slice(end);
+          textArea.value = before + after;
+          textArea.selectionStart = start;
+          textArea.selectionEnd = start;
+        }
+        textArea.focus();
+        autoScrollToBottom();
+        pushHistory();
+      });
+      btnClear.addEventListener('click', () => {
+        textArea.value = '';
+        textArea.selectionStart = 0;
+        textArea.selectionEnd = 0;
+        textArea.focus();
+        autoScrollToBottom();
+        pushHistory();
+      });
+      btnCopy.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(textArea.value);
+        } catch (e) {
+          // Fallback: select and copy
+          textArea.select();
+          document.execCommand('copy');
+          textArea.setSelectionRange(textArea.value.length, textArea.value.length);
+        }
+      });
+      btnPaste.addEventListener('click', async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            insertAtCursor(text);
+          }
+        } catch (e) {
+          // Clipboard not available; ignore
+        }
+      });
+      btnExport.addEventListener('click', () => {
+        const blob = new Blob([textArea.value], {
+          type: 'text/plain;charset=utf-8'
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'greek_polytonic_text.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+      btnUndo.addEventListener('click', () => {
+        if (historyIndex > 0) {
+          historyIndex--;
+          applyHistory(historyIndex);
+          updateUndoRedoButtons();
+        }
+      });
+      btnRedo.addEventListener('click', () => {
+        if (historyIndex < history.length - 1) {
+          historyIndex++;
+          applyHistory(historyIndex);
+          updateUndoRedoButtons();
+        }
+      });
+      // Track manual typing for history and auto-scroll
+      textArea.addEventListener('input', () => {
+        autoScrollToBottom();
+        pushHistory();
+      });
+      // Initialize history with empty state
+      pushHistory();
+      updateUndoRedoButtons();
+    })();
+  </script>
+</body>
+
+</html>
